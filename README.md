@@ -40,3 +40,24 @@ aigesee-ai-tool-reliability/
 ├── .gitignore
 └── README.md
 ```
+## Database Schema
+
+### `ai_tools`
+
+Stores publicly available AI tools that Aigesee AI may monitor.
+
+| Column | Type | Description |
+|---|---|---|
+| `id` | BIGSERIAL | Unique identifier |
+| `name` | TEXT | AI tool name |
+| `website_url` | TEXT | Public website URL |
+| `category` | TEXT | AI tool category |
+| `description` | TEXT | Short description |
+| `pricing_model` | TEXT | Pricing model |
+| `pricing_url` | TEXT | Public pricing page |
+| `documentation_url` | TEXT | Documentation URL |
+| `github_url` | TEXT | Public GitHub repository |
+| `source` | TEXT | Source of the tool information |
+| `created_at` | TIMESTAMPTZ | Record creation time |
+| `updated_at` | TIMESTAMPTZ | Last update time |
+| `is_active` | BOOLEAN | Whether the tool is currently active |
