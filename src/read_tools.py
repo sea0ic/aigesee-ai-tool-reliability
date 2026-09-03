@@ -8,6 +8,7 @@ try:
     cursor.execute("""
         SELECT id, name, website_url, category, is_active
         FROM ai_tools
+        WHERE is_active = TRUE
         ORDER BY id;
     """)
 
