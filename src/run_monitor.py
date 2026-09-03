@@ -1,4 +1,4 @@
-from db import get_connection
+from db import get_connection, save_health_check
 from monitor import check_website
 
 
@@ -31,37 +31,15 @@ try:
         if result["error_type"]:
             print(f"Error type: {result['error_type']}")
 
-        cursor.execute("""
-            INSERT INTO health_checks (
-                ai_tool_id,
-                status,
-                status_code,
-                response_time_ms,
-                error_type,
-                error_message,
-                redirect_url,
-                redirected,
-                timeout
-            )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
-        """, (
-            tool_id,
-            result["status"],
-            result["status_code"],
-            result["response_time_ms"],
-            result["error_type"],
-            result["error_message"],
-            result["redirect_url"],
-            result["redirected"],
-            result["timeout"],
-        ))
+        save_health_check(connection, tool_id, result)
 
     connection.commit()
 
-    print("\nHealth check results saved to database.")
-
     cursor.close()
     connection.close()
+
+    print("\nHealth check results saved to database.")
+
 
 except Exception as error:
     print("Monitoring run failed.")
