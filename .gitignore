@@ -1,0 +1,6 @@
+venv/
+.env
+__pycache__/
+.pytest_cache/
+AI_Tool_Reliability_Daily_Checklist.md
+AI_Tool_Reliability_Project_Guide.md
