@@ -46,6 +46,7 @@ def check_website(url):
 
         return {
             "status": status,
+            "reachable": True,
             "status_code": response.status_code,
             "response_time_ms": round(response_time_ms, 2),
             "error_type": error_type,
@@ -58,6 +59,7 @@ def check_website(url):
     except requests.exceptions.Timeout as error:
         return {
             "status": "down",
+            "reachable": False,
             "status_code": None,
             "response_time_ms": None,
             "error_type": "timeout",
@@ -70,6 +72,7 @@ def check_website(url):
     except requests.exceptions.RequestException as error:
         return {
             "status": "down",
+            "reachable": False,
             "status_code": None,
             "response_time_ms": None,
             "error_type": type(error).__name__,
