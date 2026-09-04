@@ -1,46 +1,57 @@
-from db import get_connection, save_health_check
+from db import get_connection, save_health_check, save_monitoring_failure
 from monitor import check_website
 
 
-try:
+def run_monitor():
     connection = get_connection()
     cursor = connection.cursor()
 
-    cursor.execute("""
-        SELECT id, name, website_url
-        FROM ai_tools
-        WHERE is_active = TRUE
-        ORDER BY id;
-    """)
+    try:
+        cursor.execute("""
+            SELECT id, name, website_url
+            FROM ai_tools
+            WHERE is_active = TRUE
+            ORDER BY id;
+        """)
 
-    tools = cursor.fetchall()
+        tools = cursor.fetchall()
 
-    for tool in tools:
-        tool_id, name, website_url = tool
+        for tool in tools:
+            tool_id, name, website_url = tool
 
-        print(f"\nChecking: {name}")
-        print(f"URL: {website_url}")
+            print(f"\nChecking: {name}")
+            print(f"URL: {website_url}")
 
-        result = check_website(website_url)
+            try:
+                result = check_website(website_url)
 
-        print(f"Status: {result['status']}")
-        print(f"HTTP status code: {result['status_code']}")
-        print(f"Response time: {result['response_time_ms']} ms")
-        print(f"Redirected: {result['redirected']}")
+                print(f"Status: {result['status']}")
+                print(f"HTTP status code: {result['status_code']}")
+                print(f"Response time: {result['response_time_ms']} ms")
+                print(f"Redirected: {result['redirected']}")
 
-        if result["error_type"]:
-            print(f"Error type: {result['error_type']}")
+                if result["error_type"]:
+                    print(f"Error type: {result['error_type']}")
 
-        save_health_check(connection, tool_id, result)
+                save_health_check(connection, tool_id, result)
+                connection.commit()
 
-    connection.commit()
+            except Exception as error:
+                print(f"Monitoring failed for {name}.")
+                print(f"Error: {error}")
 
-    cursor.close()
-    connection.close()
+                save_monitoring_failure(connection, tool_id, error)
+                connection.commit()
 
-    print("\nHealth check results saved to database.")
+    finally:
+        cursor.close()
+        connection.close()
 
 
-except Exception as error:
-    print("Monitoring run failed.")
-    print(f"Error: {error}")
+if __name__ == "__main__":
+    try:
+        run_monitor()
+        print("\nMonitoring run completed.")
+    except Exception as error:
+        print("Monitoring run failed.")
+        print(f"Error: {error}")

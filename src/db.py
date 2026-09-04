@@ -15,6 +15,7 @@ def get_connection():
 
     return psycopg2.connect(database_url)
 
+
 def save_health_check(connection, tool_id, result):
     cursor = connection.cursor()
 
@@ -41,6 +42,35 @@ def save_health_check(connection, tool_id, result):
         result["redirect_url"],
         result["redirected"],
         result["timeout"],
+    ))
+
+    cursor.close()
+
+
+def save_monitoring_failure(connection, tool_id, error):
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        INSERT INTO health_checks (
+            ai_tool_id,
+            status,
+            status_code,
+            response_time_ms,
+            error_type,
+            error_message,
+            redirected,
+            timeout
+        )
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
+    """, (
+        tool_id,
+        "down",
+        None,
+        None,
+        type(error).__name__,
+        str(error),
+        False,
+        False,
     ))
 
     cursor.close()
