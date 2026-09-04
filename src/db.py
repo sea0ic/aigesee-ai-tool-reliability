@@ -23,6 +23,7 @@ def save_health_check(connection, tool_id, result):
         INSERT INTO health_checks (
             ai_tool_id,
             status,
+            reachable,
             status_code,
             response_time_ms,
             error_type,
@@ -31,10 +32,11 @@ def save_health_check(connection, tool_id, result):
             redirected,
             timeout
         )
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
     """, (
         tool_id,
         result["status"],
+        result["reachable"],
         result["status_code"],
         result["response_time_ms"],
         result["error_type"],
@@ -54,6 +56,7 @@ def save_monitoring_failure(connection, tool_id, error):
         INSERT INTO health_checks (
             ai_tool_id,
             status,
+            reachable,
             status_code,
             response_time_ms,
             error_type,
@@ -61,10 +64,11 @@ def save_monitoring_failure(connection, tool_id, error):
             redirected,
             timeout
         )
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
     """, (
         tool_id,
         "down",
+        False,
         None,
         None,
         type(error).__name__,

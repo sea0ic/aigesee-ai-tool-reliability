@@ -26,6 +26,7 @@ def run_monitor():
                 result = check_website(website_url)
 
                 print(f"Status: {result['status']}")
+                print(f"Reachable: {result['reachable']}")
                 print(f"HTTP status code: {result['status_code']}")
                 print(f"Response time: {result['response_time_ms']} ms")
                 print(f"Redirected: {result['redirected']}")
