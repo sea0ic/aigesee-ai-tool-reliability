@@ -1,6 +1,22 @@
+import os
 import time
 
 import requests
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
+
+USER_AGENT = os.getenv(
+    "MONITOR_USER_AGENT",
+    "AigeseeAI-Monitor/1.0",
+)
+
+REQUEST_HEADERS = {
+    "User-Agent": USER_AGENT,
+    "Accept": "text/html,application/xhtml+xml",
+}
 
 
 def check_website(url):
@@ -11,6 +27,7 @@ def check_website(url):
             url,
             timeout=10,
             allow_redirects=True,
+            headers=REQUEST_HEADERS,
         )
 
         end_time = time.perf_counter()
